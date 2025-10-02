@@ -1,4 +1,4 @@
-/* app.js - Dapur Mercon Sultan v10.2 (Final, Fixed & Tested) */
+/* app.js - Dapur Mercon Sultan v11.0 (Final Polish) */
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -347,8 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
                  testimonialWrapper.innerHTML = testimonials.map(t => `<div class="swiper-slide h-100"><div class="card h-100 p-3"><div class="card-body text-center"><img src="${t.img}" class="rounded-circle mb-2" width="60" height="60" alt="${t.name}" style="object-fit: cover;"><h6 class="card-title">${t.name}</h6><div class="star-rating">${renderStars(t.rating)}</div><p class="card-text text-muted mt-2 fst-italic">"${t.text}"</p></div></div></div>`).join('');
             }
             
-            new Swiper('.best-sellers-swiper', { slidesPerView: 1.3, spaceBetween: 15, grabCursor: true, breakpoints: { 768: { slidesPerView: 3, spaceBetween: 30 } } });
-            new Swiper('.testimonials-swiper', { slidesPerView: 1.3, spaceBetween: 15, grabCursor: true, breakpoints: { 768: { slidesPerView: 2, spaceBetween: 30 }, 992: { slidesPerView: 3, spaceBetween: 30 } } });
+            // [FIX RESPONSIVE] Mengubah slidesPerView untuk HP
+            new Swiper('.best-sellers-swiper', { slidesPerView: 1.2, spaceBetween: 15, grabCursor: true, breakpoints: { 768: { slidesPerView: 3, spaceBetween: 30 } } });
+            new Swiper('.testimonials-swiper', { slidesPerView: 1.2, spaceBetween: 15, grabCursor: true, breakpoints: { 768: { slidesPerView: 2, spaceBetween: 30 }, 992: { slidesPerView: 3, spaceBetween: 30 } } });
         } catch (error) { console.error("Error on Home Page:", error); }
     }
 
@@ -419,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cart.length === 0) {
                     const cartPageContainer = document.getElementById('cart-page-container');
                     if (cartPageContainer) cartPageContainer.innerHTML = `<div class="col-12 text-center bg-white p-5 rounded-4 shadow-sm"><i class="bi bi-cart-x fs-1 text-muted"></i><h4 class="mt-3">Keranjang Anda kosong</h4><p class="text-muted">Ayo, isi dengan hidangan lezat!</p><a href="index.html#menu" class="btn btn-primary mt-3">Mulai Belanja</a></div>`;
+                    if (summary) summary.style.display = 'none';
                     return;
                 }
                 if (summary) summary.style.display = 'block';
@@ -464,11 +466,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('cart-items-container').addEventListener('click', e => {
                 const { action, cartid } = e.target.dataset;
                 if (!action || !cartid) return;
-                
                 let cart = getCart();
                 const itemIndex = cart.findIndex(i => i.cartId === cartid);
                 if (itemIndex === -1) return;
-
                 if (action === 'increase') cart[itemIndex].quantity++;
                 if (action === 'decrease') cart[itemIndex].quantity--;
                 if (action === 'remove' && confirm('Hapus item ini?')) cart.splice(itemIndex, 1);
@@ -478,9 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     input.style.display = input.style.display === 'block' ? 'none' : 'block';
                     if (input.style.display === 'block') input.focus();
                 }
-
                 if (cart[itemIndex] && cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1);
-                
                 saveCart(cart);
                 renderCartPage();
                 updateCartCountBadge();
@@ -515,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (getCart().length === 0) return alert('Keranjang kosong!');
                 customerDataModal.show();
             };
-
             renderCartPage();
         } catch(error) { console.error("Error on Cart Page:", error); }
     }
